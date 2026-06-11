@@ -591,6 +591,7 @@ function tryEnter() {
 const OPTIONS = ['🎬  Cine', '🛹  Carrerita de Patinetas', '🍽  Cena Romantica', '🏨  Motelear', '🏎  Ver F1', '🎨  Pintar', '🎮  Noche de Jugar'];
 
 let rouletteResult = null;
+let lastResult = null;
 let spinning = false;
 let currentIndex = 0;
 
@@ -647,10 +648,12 @@ function spinRoulette() {
   const loops = 4 + Math.floor(Math.random() * 2);
 
   let extra;
+  let nuevaOpcion;
 
   do {
     extra = Math.floor(Math.random() * OPTIONS.length);
-  } while (OPTIONS[extra] === lastResult);
+    nuevaOpcion = OPTIONS[extra];
+  } while (nuevaOpcion === lastResult);
 
   const totalItems = OPTIONS.length * loops + extra;
   const targetIndex = currentIndex + totalItems;
@@ -659,7 +662,10 @@ function spinRoulette() {
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       currentIndex = targetIndex;
-      const offset = currentIndex * ITEM_H - (WIN_H / 2 - ITEM_H / 2);
+
+      const offset =
+        currentIndex * ITEM_H - (WIN_H / 2 - ITEM_H / 2);
+
       const track = document.getElementById('roulette-track');
 
       track.style.transition =
@@ -677,12 +683,18 @@ function spinRoulette() {
     });
   });
 }
-  function endSpin() {
+ function endSpin() {
   spinning = false;
+
   rouletteResult = OPTIONS[currentIndex % OPTIONS.length];
+
+  // Guardar resultado para evitar repetirlo
   lastResult = rouletteResult;
+
   document.getElementById('spin-btn').disabled = false;
-  document.getElementById('confirm-roulette-btn').style.display = 'inline-flex';
+
+  document.getElementById('confirm-roulette-btn').style.display =
+    'inline-flex';
 }
 
 function confirmRoulette() {
